@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Category</th>
+            <th scope="col">Name</th>
+            {# <th scope="col">Parent</th> #}
+            <th scope="col">Details</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for category in categories %}
+            <tr class="table-secondary">
+                <td scope="row">{{category.id}}</td>
+                <td>{{category.name}}</td>
+                {# <td>{{category.parent}}</td> #}
+                <td><a class="nav-link" href="{{ path('categoryDetails', { id :category.id}) }}">Details</a></td>
+                <td><a class="nav-link" href="{{ path('categoryEdit', { id :category.id}) }}">Modify</a></td>
+                <td><a class="nav-link" href="{{ path('categoryDelete', { id :category.id}) }}">Delete</a></td>
+            </tr>
+
+    {% endfor %}
+    </tbody>
+</table>      
+   <button type="button" class="btn btn-secondary"><a href="{{ path('categoryAdd') }}">ADD</a></button>
+{% endblock %}
+

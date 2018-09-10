@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+<h4>Article Details:</h2>
+<p text-muted>Title: {{article.title}}</p>
+<p text-muted>Content: {{article.content}}</p>
+<p><img src="{{ article.image }}" alt="image from article"<p>
+<p>Author: {{ article.author.name }}</p> 
+<p>Categories: {{ article.categories }}</p> 
+<p class="text-success">Date of creation: {{ article.createdAt | date('Y-m-d:h:s') }}</p>
+<p class="text-success">Date of last visit: {{ article.modifiedAt | date('Y-m-d:h:s') }}</p>
+{% endblock %}

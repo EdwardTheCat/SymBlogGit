@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Article</th>
+                <th scope="col">Title</th>
+                <th scope="col">Content</th>
+                <th scope="col">Image</th>
+                <th scope="col">Author</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Modified At</th>
+                <th scope="col">Details</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for article in articles %}
+                <tr class="table-secondary">
+                    <td scope="row">{{article.id}}</td>
+                    <td>{{article.title}}</td>
+                    <td>{{article.content}}</td>
+                    <td>{{article.image}}</td>
+                    <td>{{article.author.name}}</td>
+                    <td>{{article.createdAt | date('Y-m-d:h:s')  }} </td>
+                    <td>{{article.modifiedAt | date('Y-m-d:h:s') }}</td>
+                    <td><a class="nav-link" href="{{ path('articleDetails', { id :article.id}) }}">Details</a></td>
+                    <td><a class="nav-link" href="{{ path('articleEdit', { id :article.id}) }}">Modify</a></td>
+                    <td><a class="nav-link" href="{{ path('articleDelete', { id :article.id}) }}">Delete</a></td>
+                </tr>
+        
+        {% endfor %}
+        
+        </tbody>
+    </table>      
+    <a href="{{ path('articleAdd') }}">ADD</a>
+{% endblock %}
+

@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+{% block body %}
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+
+    {{ form_row(form.name) }}
+ 
+    {% if action == true %}
+        <input type="submit" value="Add Category"/>
+    {% else %}
+        <input type="submit" value="Modify Category"/>
+    {% endif %}
+{{ form_end(form) }}
+{% endblock %}
+
