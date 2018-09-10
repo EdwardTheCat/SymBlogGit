@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">User</th>
+            <th scope="col">Name</th>
+            <th scope="col">Lastname</th>
+            <th scope="col">Email</th>
+            <th scope="col">Details</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+            <tr class="table-secondary">
+                <td scope="row">{{user.id}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.lastname}}</td>
+                <td>{{user.email}}</td>
+                <td><a class="nav-link" href="{{path('detailsUser',{id:user.id}) }}">Details</a></td>
+                <td><a class="nav-link" href="{{path('userEdit',{id:user.id}) }}">Modify</a></td>
+                 <td><a class="nav-link" href="{{path('userDelete',{id:user.id}) }}">Delete</a></td>
+            </tr>
+      
+    {% endfor %}
+    
+     </tbody>
+</table>      
+   
+{% endblock %}
+
