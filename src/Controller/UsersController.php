@@ -2,33 +2,24 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Users;
+use App\Form\UsersType;
+use App\Repository\UsersRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Repository\UsersRepository;
+use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
 class UsersController extends AbstractController
 {
-    /**
-     * @Route("/users", name="users")
-     */
-    public function index()
-    {
-        return $this->render('users/index.html.twig', [
-            'controller_name' => 'UsersController',
-            'test_name' => 'Gérard'
-        ]);
-    }
 
     /**
      * @Route("/users/{id}", name="detailsUser" , requirements={"id"="\d+"})
@@ -44,7 +35,9 @@ class UsersController extends AbstractController
 
 
      /**
+      * 
      * @Route("/users/list", name="usersList")
+     * @Route("/users", name="users")
      */
     public function list(UsersRepository $repo){
         //pour insérer les fitures
@@ -81,18 +74,20 @@ class UsersController extends AbstractController
         // $user->setDateCreate(new \DateTime(time()));
 
 
-        $form = $this->createFormBuilder($user)
-            ->add('name')
-            ->add('lastName')
-            ->add('email')
-            ->add('password', RepeatedType::class, array(
-                'type' => PasswordType::class,
-                'first_options'  => array('label' => 'Password'),
-                'second_options' => array('label' => 'Repeat Password'),
-            ))
+        // $form = $this->createFormBuilder($user)
+        //     ->add('name')
+        //     ->add('lastName')
+        //     ->add('email')
+        //     ->add('password', RepeatedType::class, array(
+        //         'type' => PasswordType::class,
+        //         'first_options'  => array('label' => 'Password'),
+        //         'second_options' => array('label' => 'Repeat Password'),
+        //     ))
             
-            ->getForm();
+        //     ->getForm();
 
+            $form = $this->createForm(UsersType::class, $user);
+            
             $form->handleRequest($request);
            
             if ($form->isSubmitted() && $form->isValid()) {
