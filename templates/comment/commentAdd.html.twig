@@ -3,17 +3,15 @@
 {% block body %}
 
 {{ form_start(form) }}
-{{ form_widget(form) }}
 
-    {{ form_row(form.title) }}
     {{ form_row(form.content) }}
     {{ form_row(form.author) }}
-    {{ form_row(form.image) }}
-    {{ form_row(form.categories) }}
+    {{ form_row(form.article) }}
+
     {% if action == true %}
-        <input type="submit" value="Add Article"/>
+        <input type="submit" value="Add Comment"/>
     {% else %}
-        <input type="submit" value="Modify Article"/>
+        <input type="submit" value="Modify Comment"/>
     {% endif %}
 {{ form_end(form) }}
 {% endblock %}

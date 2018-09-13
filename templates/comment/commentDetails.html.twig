@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+<h4>Comment Details:</h2>
+<p text-muted>Content: {{comment.content}}</p>
+<p text-muted>Author: {{comment.author.name}}</p>
+<p text-muted>Article: {{comment.article.title}}</p>
+<p text-muted>CreatedAt: {{comment.createdAt}}</p>
+{% endblock %}

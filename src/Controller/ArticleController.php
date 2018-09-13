@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Form\ArticleType;
+use App\Form\CommentType;
 use App\Repository\UsersRepository;
 use App\Repository\ArticleRepository;
+use App\Repository\CommentRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -16,33 +20,61 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ArticleController extends AbstractController
 {
     /**
-     * @Route("/articles/{id}", name="articleDetails" , requirements={"id"="\d+"})
+     * @Route("articles/{id}", name="articleDetails" , requirements={"id"="\d+"})
      */
-    public function details(ArticleRepository $repo, $id)
+    public function details(Article $article, CommentRepository $repoComment, Request $request)
     {   
-        $article=$repo->findOneById($id);
+        $comment=new Comment();
+         //We use the form article
+         $form = $this->createForm(CommentType::class, $comment);
+         $form->remove('article');
+         $form->remove('author');
+         //the form handle the request
+         $form->handleRequest($request);
+         
+         //is form is submitted and valid
+         if ($form->isSubmitted() && $form->isValid()) {
+             $comment->setCreatedAt(new \DateTime());   
+             $comment->setArticle($article);
+             $comment->setAuthor($article->getAuthor());
+
+             //we make the recording of an article and flush the manager to do it
+             $manager->persist($comment);
+             $manager->flush();
+             
+             return $this->redirectToRoute('commentList');
+         }
+
+        $comments=$repoComment->findByArticle($article->getId());
         return $this->render('Article/articleDetails.html.twig', [
             'controller_name' => 'ArticleController',
-            'article' => $article
+            'form' => $form->createView(),
+            'article' => $article,
+            'comments' => $comments
+            
         ]);
     }
     
     
      /**
-     * @Route("/articles/list", name="articleList")
-     * @Route("/article", name="article")
+     * @Route("articles/list", name="articleList")
+     * @Route("article", name="article")
+     * @Route("/", name="home")
+     * @Route("/logout", name="logout")
+     *
      */
-    public function list(ArticleRepository $repo){
+    public function list(ArticleRepository $repoArticle, CommentRepository $repoComment){
         
-        $articles=$repo->findAll();
+        $articles=$repoArticle->findAll();
+        $comments=$repoComment->findAll();
 
-        return $this->render('article/articleList.html.twig', ["articles" => $articles]);      
+        return $this->render('article/articleList.html.twig', ["articles" => $articles, "comments" => $comments]);      
 
     }
 
      /**
-     * @Route("/articles/add", name="articleAdd")
-     * @Route("/articles/edit/{id}", name="articleEdit" , requirements={"id"="\d+"})
+     * @Route("admin/articles/add", name="articleAdd")
+     * @Route("admin/articles/edit/{id}", name="articleEdit" , requirements={"id"="\d+"})
      */
     public function add(Article $article=null, Request $request, ObjectManager $manager)
     {
@@ -77,7 +109,7 @@ class ArticleController extends AbstractController
 
     /**
      * 
-     * @Route("/articles/delete/{id}", name="articleDelete" , requirements={"id"="\d+"})
+     * @Route("admin/articles/delete/{id}", name="articleDelete" , requirements={"id"="\d+"})
      */
     public function delete(Article $article=null, Request $request, ObjectManager $manager)
     {

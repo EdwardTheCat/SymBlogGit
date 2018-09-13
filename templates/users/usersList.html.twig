@@ -20,15 +20,15 @@
                     <td>{{user.name}}</td>
                     <td>{{user.lastname}}</td>
                     <td>{{user.email}}</td>
-                    <td><a class="nav-link" href="{{path('detailsUser',{id:user.id}) }}">Details</a></td>
-                    <td><a class="nav-link" href="{{path('userEdit',{id:user.id}) }}">Modify</a></td>
-                    <td><a class="nav-link" href="{{path('userDelete',{id:user.id}) }}">Delete</a></td>
+                    <td><a href="{{path('detailsUser',{id:user.id}) }}">Details</a></td>
+                    <td><a href="{{path('userEdit',{id:user.id}) }}">Modify</a></td>
+                    <td><a href="{{path('userDelete',{id:user.id}) }}">Delete</a></td>
                 </tr>
         
         {% endfor %}
         
         </tbody>
     </table>
-    <button type="button" class="btn btn-secondary"><a href="{{ path('userAdd') }}">ADD</a></button>      
+    <a href="{{ path('userAdd') }}">ADD</a>   
 {% endblock %}
 

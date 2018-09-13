@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{# ne marche pas pour le style bootswatch {% form_theme form 'bootstrap_4_layout.html.twig' %} #}
+
+{% block title %}Hello LOGIN !{% endblock %}
+
+{% block body %}
+
+    {% if error %}
+    {{ dump(error) }}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+   {# } {{ form(form) }} #}
+    <form action="{{ path('login') }}" method="POST">
+        <input type="text" name="_username">
+        <input type="password" name="_password">
+        <input type="submit" value="Login !">
+    </form>
+
+
+{% endblock %}

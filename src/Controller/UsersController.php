@@ -10,8 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
 
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +23,7 @@ class UsersController extends AbstractController
 {
 
     /**
-     * @Route("/users/{id}", name="detailsUser" , requirements={"id"="\d+"})
+     * @Route("admin/users/{id}", name="detailsUser" , requirements={"id"="\d+"})
      */
     public function details(UsersRepository $repo, $id)
     {   
@@ -36,8 +37,8 @@ class UsersController extends AbstractController
 
      /**
       * 
-     * @Route("/users/list", name="usersList")
-     * @Route("/users", name="users")
+     * @Route("admin/users/list", name="usersList")
+     * @Route("admin/users", name="users")
      */
     public function list(UsersRepository $repo){
         //pour insérer les fitures
@@ -58,8 +59,8 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/users/add", name="userAdd")
-     * @Route("/users/edit/{id}", name="userEdit" , requirements={"id"="\d+"})
+     * @Route("adminroot/users/add", name="userAdd")
+     * @Route("adminroot/users/edit/{id}", name="userEdit" , requirements={"id"="\d+"})
      */
     public function add(Users $user=null, Request $request, ObjectManager $manager, UserPasswordEncoderInterface $passwordEncoder)
     {
@@ -87,19 +88,44 @@ class UsersController extends AbstractController
         //     ->getForm();
 
             $form = $this->createForm(UsersType::class, $user);
+        
             
+            $user=$this->getUser();
+
+            dump($user);
+
+            if(in_array("ROLE_USER", $user->getRoles())){
+                $form->add('roles', ChoiceType::class, array('choices' => array( 'ROLE_USER' => 0) ) );
+            }
+            if(in_array("ROLE_AUTHOR", $user->getRoles())){
+                $form->add('roles', ChoiceType::class, array('choices' => array( 'ROLE_USER' => 0, 'ROLE_AUTHOR' => 1) ) );
+            }
+            if(in_array("ROLE_ADMIN", $user->getRoles())){
+                $form->add('roles', ChoiceType::class, array('choices' => array( 'ROLE_USER' => 0, 'ROLE_AUTHOR' => 1, 'ROLE_ADMIN' => 2) ) );
+            }
+
             $form->handleRequest($request);
            
             if ($form->isSubmitted() && $form->isValid()) {
                 
                 $user->setDateCreate(new \DateTime());
                 
-                $password = $passwordEncoder->encodePassword($user, $user->getPassword());
-                $user->setPassword($password);
+                //we encode the password
+                $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
+                if($user->getPassword()!=$password) $user->setPassword($password);
+
+                //set user active
+                $user->setIsActive(true);
+                //$user->eraseCredentials();
                 
+                dump($user);
+
+                //save user
                 $manager->persist($user);
                 $manager->flush();
                 
+                $this->addFlash('success', 'Your account has been added !');
+
                 //return $this->redirectToRoute('detailsUser',array('id' => $user->getId()));
                 return $this->redirectToRoute('usersList');
                 
@@ -110,8 +136,6 @@ class UsersController extends AbstractController
             }
             
          
-          
-            
         
         return $this->render('Users/usersAdd.html.twig', [
             'controller_name' => 'UsersController',
@@ -123,7 +147,7 @@ class UsersController extends AbstractController
 
      /**
      * 
-     * @Route("/users/delete/{id}", name="userDelete" , requirements={"id"="\d+"})
+     * @Route("adminroot/users/delete/{id}", name="userDelete" , requirements={"id"="\d+"})
      */
     public function delete(Users $user=null, Request $request, ObjectManager $manager, UserPasswordEncoderInterface $passwordEncoder)
     {
@@ -135,4 +159,5 @@ class UsersController extends AbstractController
 
         return $this->redirectToRoute('usersList');
     }
+
 }

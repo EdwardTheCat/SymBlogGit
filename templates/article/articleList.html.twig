@@ -3,39 +3,43 @@
 
 {% block body %}
     <table class="table table-hover">
+        <caption>Articles with their comments</caption>
         <thead>
             <tr>
-                <th scope="col">Article</th>
                 <th scope="col">Title</th>
-                <th scope="col">Content</th>
                 <th scope="col">Image</th>
                 <th scope="col">Author</th>
                 <th scope="col">Created At</th>
-                <th scope="col">Modified At</th>
                 <th scope="col">Details</th>
                 <th scope="col">Edit</th>
                 <th scope="col">Delete</th>
+                <th scope="col">Comment</th>
             </tr>
         </thead>
         <tbody>
-        {% for article in articles %}
+            {% for article in articles %}
                 <tr class="table-secondary">
-                    <td scope="row">{{article.id}}</td>
-                    <td>{{article.title}}</td>
-                    <td>{{article.content}}</td>
-                    <td>{{article.image}}</td>
-                    <td>{{article.author.name}}</td>
-                    <td>{{article.createdAt | date('Y-m-d:h:s')  }} </td>
-                    <td>{{article.modifiedAt | date('Y-m-d:h:s') }}</td>
-                    <td><a class="nav-link" href="{{ path('articleDetails', { id :article.id}) }}">Details</a></td>
-                    <td><a class="nav-link" href="{{ path('articleEdit', { id :article.id}) }}">Modify</a></td>
-                    <td><a class="nav-link" href="{{ path('articleDelete', { id :article.id}) }}">Delete</a></td>
+                    <td>{{ article.title }}</td>
+                    <td>{{ article.image }}</td>
+                    <td>{{ article.author.name }}</td>
+                    <td>{{ article.createdAt | date('Y-m-d:h:s')  }} </td>
+                    <td><a href="{{ path('articleDetails', { id :article.id}) }}">Details</a></td>
+                    <td><a href="{{ path('articleEdit', { id :article.id}) }}">Modify</a></td>
+                    <td><a href="{{ path('articleDelete', { id :article.id}) }}">Delete</a></td>
+                    <td><a href="{{ path('commentAddId', { id :article.id}) }}">Comment</a></td>
                 </tr>
         
-        {% endfor %}
-        
+                {% for comment in comments %}
+                   {% if comment.article.title == article.title %}
+                    <tr>
+                        <td>{{ comment.content }}</td>
+                        <td>{{ comment.author.name }}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
         </tbody>
-    </table>      
+    </table>              
     <a href="{{ path('articleAdd') }}">ADD</a>
 {% endblock %}
 

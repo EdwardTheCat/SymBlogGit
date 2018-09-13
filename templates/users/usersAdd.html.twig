@@ -8,8 +8,8 @@
     {{ form_row(form.name) }}
     {{ form_row(form.lastName) }}
     {{ form_row(form.email) }}
-    {{ form_row(form.password.first) }}
-    {{ form_row(form.password.second) }}
+    {{ form_row(form.plainPassword.first) }}
+    {{ form_row(form.plainPassword.second) }}
     {% if action == true %}
         <input type="submit" value="Add User"/>
     {% else %}

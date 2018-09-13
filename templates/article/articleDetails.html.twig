@@ -2,12 +2,28 @@
 
 
 {% block body %}
-<h4>Article Details:</h2>
-<p text-muted>Title: {{article.title}}</p>
-<p text-muted>Content: {{article.content}}</p>
-<p><img src="{{ article.image }}" alt="image from article"<p>
-<p>Author: {{ article.author.name }}</p> 
-<p>Categories: {{ article.categories }}</p> 
-<p class="text-success">Date of creation: {{ article.createdAt | date('Y-m-d:h:s') }}</p>
-<p class="text-success">Date of last visit: {{ article.modifiedAt | date('Y-m-d:h:s') }}</p>
+    <h4>Article Details:</h4>
+    <p text-muted>Title: {{article.title}}</p>
+    <p text-muted>Content: {{article.content}}</p>
+    <p><img src="{{ article.image }}" alt="image from article"<p>
+    <p>Author: {{ article.author.name }}</p> 
+    <p>Category: 
+    {% for category in article.categories %}
+        {{ category.name }} 
+    {% endfor %}
+    <h5>Comments:</h5> 
+    {% for comment in article.comments %}
+        {{ comment.author.name }} : {{ comment.content }} <br/>
+    {% endfor %}
+
+    <p class="text-success">
+                            Date of creation: {{ article.createdAt | date('Y-m-d:h:s') }},
+                            Date of last modification: {{ article.modifiedAt | date('Y-m-d:h:s') }}
+    </p>
+    {% if is_granted('ROLE_USER') %}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+         <input type="submit" value="Add comment"/>
+    {% endif %}
 {% endblock %}

@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UsersRepository")
+ * @UniqueEntity("email")
  */
 class Users implements UserInterface
 {
@@ -46,6 +48,12 @@ class Users implements UserInterface
      */
     private $password;
 
+     /**
+     * @Assert\NotBlank()
+     * @Assert\Length(max=4096)
+     */
+    private $plainPassword;
+
     /**
      * @ORM\Column(type="datetime")
      */
@@ -60,6 +68,21 @@ class Users implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\Article", mappedBy="author")
      */
     private $articles;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
+     */
+    private $comments;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isActive;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $roles;
 
     public function __construct()
     {
@@ -119,6 +142,16 @@ class Users implements UserInterface
         return $this;
     }
 
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($password)
+    {
+        $this->plainPassword = $password;
+    }
+
     public function getDateCreate(): ?\DateTimeInterface
     {
         return $this->dateCreate;
@@ -143,13 +176,13 @@ class Users implements UserInterface
         return $this;
     }
 
-    public function getRoles(){return array('ROLE_USER'); }
+    public function getRoles(){return $this->roles; }
 
-    public function  getSalt(){return null;}
+    public function getSalt(){}
 
-    public function   getUsername(){return $this->name;}
+    public function getUsername(){return $this->email;}
 
-    public function eraseCredentials(){$this->setPassword("");}
+    public function eraseCredentials(){}
 
     /**
      * @return Collection|Article[]
@@ -178,6 +211,67 @@ class Users implements UserInterface
                 $article->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Article $comment): self
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            // set the owning side to null (unless already changed)
+            if ($comment->getAuthor() === $this) {
+                $comment->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(?bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function setRoles($roles): self
+    {
+        switch ($roles) {
+            case 0:
+            $this->roles = array("ROLE_USER");
+                break;
+            case 1:
+            $this->roles = array("ROLE_AUTHOR");
+                break;
+            case 2:
+                $this->roles = array("ROLE_ADMIN");
+                break;
+        }
+    
 
         return $this;
     }

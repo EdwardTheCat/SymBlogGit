@@ -14,7 +14,7 @@ class CategoryController extends AbstractController
 {
 
      /**
-     * @Route("/categories/{id}", name="categoryDetails" , requirements={"id"="\d+"})
+     * @Route("admin/categories/{id}", name="categoryDetails" , requirements={"id"="\d+"})
      */
     public function details(CategoryRepository $repo, $id)
     {   
@@ -27,8 +27,8 @@ class CategoryController extends AbstractController
     
     
      /**
-     * @Route("/categories/list", name="categoryList")
-     * @Route("/category", name="category")
+     * @Route("admin/categories/list", name="categoryList")
+     * @Route("admin/category", name="category")
      */
     public function list(CategoryRepository $repo){
         
@@ -39,8 +39,8 @@ class CategoryController extends AbstractController
     }
 
      /**
-     * @Route("/categories/add", name="categoryAdd")
-     * @Route("/categories/edit/{id}", name="categoryEdit" , requirements={"id"="\d+"})
+     * @Route("admin/categories/add", name="categoryAdd")
+     * @Route("admin/categories/edit/{id}", name="categoryEdit" , requirements={"id"="\d+"})
      */
     public function add(Category $category=null, Request $request, ObjectManager $manager)
     {
@@ -73,7 +73,7 @@ class CategoryController extends AbstractController
 
     /**
      * 
-     * @Route("/categories/delete/{id}", name="categoryDelete" , requirements={"id"="\d+"})
+     * @Route("admin/categories/delete/{id}", name="categoryDelete" , requirements={"id"="\d+"})
      */
     public function delete(Category $category=null, Request $request, ObjectManager $manager)
     {
